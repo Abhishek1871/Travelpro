@@ -1,50 +1,10 @@
-<?php
-session_start();
-include '../config/db.php';
+import os
+import glob
+import re
 
-if (!isset($_SESSION['admin_logged_in'])) {
-    header("Location: login.php");
-    exit();
-}
+files = glob.glob(r'c:\xampp\htdocs\trip\admin\*.php')
 
-if (isset($_GET['delete'])) {
-    $id = $_GET['delete'];
-    $conn->query("DELETE FROM places WHERE id=$id");
-    header("Location: manage_places.php");
-}
-?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <title>Manage Places</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="../asset/css/style.css">
-
-    <style>
-        .fa-spin-hover:hover { animation: fa-spin 2s infinite linear; }
-        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
-    </style>
-
-</head>
-<body class="bg-slate-50">
-    <!-- Mobile Header -->
-    <div class="md:hidden bg-slate-900 text-white p-4 flex justify-between items-center fixed w-full z-40 top-0 border-b border-white/5 shadow-lg">
-        <div class="flex items-center gap-2">
-            <i class="fas fa-plane-departure text-purple-500"></i>
-            <span class="font-bold tracking-tight uppercase text-sm">TravelPro Admin</span>
-        </div>
-        <button onclick="document.getElementById('admin-sidebar').classList.toggle('-translate-x-full')" class="focus:outline-none w-10 h-10 flex items-center justify-center bg-white/5 rounded-lg">
-            <i class="fas fa-bars"></i>
-        </button>
-    </div>
-
-    <div class="flex min-h-screen pt-16 md:pt-0">
-        
-        
+sidebar_template = '''
         <aside id="admin-sidebar" class="w-64 bg-slate-900 text-white fixed h-full z-50 transform -translate-x-full md:translate-x-0 transition-all duration-300 border-r border-white/5">
             <div class="p-6 border-b border-white/5 flex justify-between items-center bg-slate-950/50">
                 <div class="flex items-center gap-3">
@@ -64,19 +24,19 @@ if (isset($_GET['delete'])) {
                     <div>
                         <p class="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mb-4 px-2">Main Menu</p>
                         <div class="space-y-1">
-                            <a href="dashboard.php" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all text-gray-400 hover:text-white hover:bg-white/5">
+                            <a href="dashboard.php" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all {active_dashboard}">
                                 <i class="fas fa-layer-group text-lg"></i>
                                 <span class="font-bold text-sm">Dashboard</span>
                             </a>
-                            <a href="manage_places.php" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all bg-purple-600 text-white shadow-lg shadow-purple-900/20">
+                            <a href="manage_places.php" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all {active_places}">
                                 <i class="fas fa-map-location-dot text-lg"></i>
                                 <span class="font-bold text-sm">Packages</span>
                             </a>
-                            <a href="manage_booking.php" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all text-gray-400 hover:text-white hover:bg-white/5">
+                            <a href="manage_booking.php" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all {active_bookings}">
                                 <i class="fas fa-calendar-check text-lg"></i>
                                 <span class="font-bold text-sm">Bookings</span>
                             </a>
-                            <a href="manage_vehicles.php" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all text-gray-400 hover:text-white hover:bg-white/5">
+                            <a href="manage_vehicles.php" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all {active_vehicles}">
                                 <i class="fas fa-car-side text-lg"></i>
                                 <span class="font-bold text-sm">Vehicles</span>
                             </a>
@@ -126,51 +86,58 @@ if (isset($_GET['delete'])) {
                 </div>
             </div>
         </aside>
+'''
 
+style_inject = '''
+    <style>
+        .fa-spin-hover:hover { animation: fa-spin 2s infinite linear; }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+    </style>
+'''
 
+for f in files:
+    filename = os.path.basename(f)
+    print(f"Processing {filename}...")
+    with open(f, 'r', encoding='utf-8') as file:
+        content = file.read()
+    
+    if '<aside' not in content:
+        continue
+        
+    # Determine active classes
+    active_dashboard = 'bg-purple-600 text-white shadow-lg shadow-purple-900/20' if filename == 'dashboard.php' else 'text-gray-400 hover:text-white hover:bg-white/5'
+    active_places = 'bg-purple-600 text-white shadow-lg shadow-purple-900/20' if filename in ['manage_places.php', 'add_place.php', 'edit_place.php'] else 'text-gray-400 hover:text-white hover:bg-white/5'
+    active_bookings = 'bg-purple-600 text-white shadow-lg shadow-purple-900/20' if filename == 'manage_booking.php' else 'text-gray-400 hover:text-white hover:bg-white/5'
+    active_vehicles = 'bg-purple-600 text-white shadow-lg shadow-purple-900/20' if filename == 'manage_vehicles.php' else 'text-gray-400 hover:text-white hover:bg-white/5'
+    
+    current_sidebar = sidebar_template.format(
+        active_dashboard=active_dashboard,
+        active_places=active_places,
+        active_bookings=active_bookings,
+        active_vehicles=active_vehicles
+    )
+    
+    # Replace the existing aside block
+    content = re.sub(r'<aside.*?</aside>', current_sidebar, content, flags=re.DOTALL)
+    
+    # Inject styles before </head>
+    if style_inject not in content:
+        content = content.replace('</head>', f'{style_inject}\n</head>')
+    
+    # Update body class
+    content = content.replace('<body class="bg-gray-100">', '<body class="bg-slate-50">')
+    
+    # Update mobile header
+    content = re.sub(r'<div class="md:hidden.*?</div>', 
+                    '<div class="md:hidden bg-slate-900 text-white p-4 flex justify-between items-center fixed w-full z-40 top-0 border-b border-white/5 shadow-lg">\n        <div class="flex items-center gap-2">\n            <i class="fas fa-plane-departure text-purple-500"></i>\n            <span class="font-bold tracking-tight uppercase text-sm">TravelPro Admin</span>\n        </div>\n        <button onclick="document.getElementById(\'admin-sidebar\').classList.toggle(\'-translate-x-full\')" class="focus:outline-none w-10 h-10 flex items-center justify-center bg-white/5 rounded-lg">\n            <i class="fas fa-bars"></i>\n        </button>\n    </div>', 
+                    content, flags=re.DOTALL)
 
-        <div class="md:ml-64 flex-1 p-4 md:p-8 w-full max-w-full overflow-hidden">
-            <div class="flex justify-between items-center mb-8">
-                <h1 class="text-2xl font-bold">Manage Packages</h1>
-                <a href="add_place.php" class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700">Add New</a>
-            </div>
-            
-            <?php if(isset($_GET['msg']) && $_GET['msg'] == 'updated'): ?>
-                <div class="bg-green-100 text-green-700 p-4 rounded mb-6">Package updated successfully!</div>
-            <?php endif; ?>
-            
-            <div class="bg-white rounded-xl shadow overflow-hidden">
-                <div class="overflow-x-auto w-full max-w-full">
-                        <table class="w-full text-left min-w-[600px]">
-                    <thead class="bg-gray-50 border-b">
-                        <tr>
-                            <th class="p-4">ID</th>
-                            <th class="p-4">Name</th>
-                            <th class="p-4">Category</th>
-                            <th class="p-4">Price</th>
-                            <th class="p-4">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php
-                        $result = $conn->query("SELECT * FROM places");
-                        while($row = $result->fetch_assoc()): ?>
-                        <tr class="border-b hover:bg-gray-50">
-                            <td class="p-4"><?php echo $row['id']; ?></td>
-                            <td class="p-4 font-medium"><?php echo htmlspecialchars($row['name']); ?></td>
-                            <td class="p-4"><?php echo htmlspecialchars($row['category']); ?></td>
-                            <td class="p-4 text-green-600">₹<?php echo number_format($row['price']); ?></td>
-                            <td class="p-4 flex gap-3">
-                                <a href="edit_place.php?id=<?php echo $row['id']; ?>" class="text-blue-500 hover:text-blue-700"><i class="fas fa-edit"></i> Edit</a>
-                                <a href="?delete=<?php echo $row['id']; ?>" class="text-red-500 hover:text-red-700" onclick="return confirm('Delete this package?')"><i class="fas fa-trash"></i> Delete</a>
-                            </td>
-                        </tr>
-                        <?php endwhile; ?>
-                    </tbody>
-                </table>
-                        </div>
-            </div>
-        </div>
-    </div>
-</body>
-</html>
+    # Fix CSS path (assets -> asset)
+    content = content.replace('../assets/css/style.css', '../asset/css/style.css')
+
+    with open(f, 'w', encoding='utf-8') as file:
+        file.write(content)
+    print(f"Successfully refined {f}")

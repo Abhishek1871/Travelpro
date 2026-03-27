@@ -25,7 +25,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if ($stmt->execute()) {
         header("Location: my_bookings.php?msg=booked");
-    } else {
+    }
+    else {
         echo "Error: " . $conn->error;
     }
 }

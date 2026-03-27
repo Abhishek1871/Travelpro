@@ -32,7 +32,8 @@ if ($is_admin) {
             WHERE b.id = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $booking_id);
-} else {
+}
+else {
     // Users can only see their own
     $sql = "SELECT b.*, p.name as place_name, p.image_path, v.name as vehicle_name, v.type as vehicle_type
             FROM bookings b 

@@ -35,7 +35,67 @@ $total_price = $days * $place['price'];
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../assets/css/style.css">
 </head>
-<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+<body class="bg-slate-50 min-h-screen">
+    <nav id="navbar" class="bg-gray-900/95 backdrop-blur-md shadow-2xl fixed w-full z-[100] top-0 border-b border-white/5 h-20">
+        <div class="max-w-7xl mx-auto px-6 h-full flex justify-between items-center w-full">
+            <!-- Branding -->
+            <a href="../index.php" class="flex items-center space-x-2 group">
+                <i class="fas fa-plane-departure text-2xl text-purple-600 transform group-hover:-translate-y-1 transition-transform"></i>
+                <span class="text-2xl font-black text-white tracking-tight">TravelPro</span>
+            </a>
+
+            <!-- Right Side Elements -->
+            <div class="flex items-center space-x-10">
+                <!-- Navigation Links -->
+                <div class="hidden lg:flex items-center space-x-10">
+                    <a href="../index.php" class="text-[13px] font-bold text-white/90 hover:text-white tracking-widest uppercase transition-colors">Home</a>
+                    <a href="../about.php" class="text-[13px] font-bold text-white/90 hover:text-white tracking-widest uppercase transition-colors">About Us</a>
+                    <a href="../index.php#contact" class="text-[13px] font-bold text-white/90 hover:text-white tracking-widest uppercase transition-colors">Contact Us</a>
+                    <!-- Gear Icon -->
+                    <a href="#" class="text-yellow-400 hover:text-yellow-300 transition-colors">
+                        <i class="fas fa-cog text-lg"></i>
+                    </a>
+                </div>
+
+                <!-- Icons & Buttons -->
+                <div class="flex items-center space-x-6">
+                    <div class="flex items-center space-x-4">
+                        <a href="profile.php" class="text-white hover:text-purple-400 transition text-sm font-bold flex items-center">
+                            <i class="fas fa-user-circle mr-2 text-lg text-purple-600"></i>Profile
+                        </a>
+                        <a href="my_bookings.php" class="bg-purple-600/20 text-purple-400 border border-purple-500/30 px-6 py-2 rounded-xl text-xs font-bold hover:bg-purple-600 hover:text-white transition-all">Back to Bookings</a>
+                    </div>
+
+                    <!-- Admin Link -->
+                    <a href="../admin/login.php" class="flex items-center space-x-2 text-white/40 hover:text-white/60 transition-colors group">
+                        <i class="fas fa-lock text-sm"></i>
+                        <span class="text-[13px] font-medium tracking-wide">Admin</span>
+                    </a>
+
+                    <!-- Mobile Burger -->
+                    <button onclick="document.getElementById('mobile-menu').classList.toggle('hidden')" class="lg:hidden w-11 h-11 flex items-center justify-center rounded-xl bg-white/5 text-white border border-white/10 hover:bg-white/10 transition focus:outline-none">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden lg:hidden bg-gray-900/95 backdrop-blur-xl border-t border-white/5 shadow-2xl absolute w-full top-full left-0 z-[100] p-8">
+            <div class="flex flex-col items-center space-y-8">
+                <a href="../index.php" class="text-lg font-bold text-white tracking-widest uppercase">Home</a>
+                <a href="../about.php" class="text-lg font-bold text-white tracking-widest uppercase">About Us</a>
+                <a href="../index.php#contact" class="text-lg font-bold text-white tracking-widest uppercase">Contact Us</a>
+                
+                <div class="w-full pt-8 border-t border-white/10 flex flex-col space-y-4">
+                    <a href="profile.php" class="w-full py-4 border-2 border-white/10 text-white rounded-2xl font-bold text-center">My Profile</a>
+                    <a href="my_bookings.php" class="w-full py-4 bg-purple-600 text-white rounded-2xl font-bold shadow-lg text-center">My Bookings</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="flex items-center justify-center w-full min-h-screen pt-24 p-4">
     <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
         <div class="bg-purple-600 p-6 text-white flex justify-between items-center">
             <h2 class="text-xl font-bold"><i class="fas fa-lock mr-2"></i>Secure Payment</h2>
